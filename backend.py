@@ -32,7 +32,18 @@ def get_data(place, forecast_days, kind):
         if kind == "Temperature":
             values = [item["main"]["temp"] for item in filtered_data]
         elif kind == "Sky":
-            values = [item["weather"][0]["main"] for item in filtered_data]
+            values = []
+            for item in filtered_data:
+                weather = item.get("weather", [{}])[0]
+                icon_code = weather.get("icon")
+                main_cond = weather.get("main", "")
+                description = weather.get("description", "")
+                icon_url = (
+                    f"http://openweathermap.org/img/wn/{icon_code}@2x.png"
+                    if icon_code
+                    else None
+                )
+                values.append({"icon": icon_url, "main": main_cond, "description": description})
         else:
             values = []
 
